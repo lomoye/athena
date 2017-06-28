@@ -1,0 +1,76 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lomoye.task.dao.SnapshotMapper">
+    <sql id="condition">
+        <where>
+            <if test="condition.id != null">
+                id = #{condition.id}
+            </if>
+            <if test="condition.shopId != null">
+                AND shop_id = #{condition.shopId}
+            </if>
+            <if test="condition.type != null">
+                AND type = #{condition.type}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="selectAllField">
+        select id,shop_id,`type`,content,create_time,modify_time from snapshot
+    </sql>
+
+    <select id="selectWithPage" parameterType="Map" resultType="Snapshot">
+        <include refid="selectAllField"/>
+        <include refid="condition"/>
+        <include refid="com.lomoye.common.dao.paged"/>
+    </select>
+
+    <select id="selectByCondition" parameterType="Map" resultType="Snapshot">
+        <include refid="selectAllField"/>
+        <include refid="condition"/>
+        <include refid="com.lomoye.common.dao.orderby"/>
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="Long" resultType="Snapshot">
+        <include refid="selectAllField"/>
+        where id=#{key}
+    </select>
+
+    <select id="selectOne" parameterType="Map" resultType="Snapshot">
+        <include refid="selectAllField"/>
+        <include refid="condition"/>
+        limit 1
+    </select>
+
+    <select id="selectCount" parameterType="Map" resultType="long">
+        select count(*) from snapshot
+        <include refid="condition"/>
+    </select>
+
+    <insert id="insert" keyProperty="id" parameterType="Snapshot">
+        insert into snapshot
+        (shop_id,`type`,content,create_time,modify_time) 
+        VALUES
+        (#{shopId},#{type},#{content},#{createTime},#{modifyTime})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="Snapshot">
+        update snapshot set 
+        shop_id=#{shopId},
+        `type`=#{type},
+        content=#{content},
+        modify_time=#{modifyTime}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="Long">
+        delete from snapshot
+        where id = #{key}
+    </delete>
+
+    <delete id="deleteByCondition" parameterType="Map">
+        delete from snapshot
+        <include refid="condition"/>
+    </delete>
+</mapper>

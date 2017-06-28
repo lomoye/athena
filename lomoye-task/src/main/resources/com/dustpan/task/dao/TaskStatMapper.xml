@@ -1,0 +1,85 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lomoye.task.dao.TaskStatMapper">
+    <sql id="condition">
+        <where>
+            <if test="condition.id != null">
+                id = #{condition.id}
+            </if>
+            <if test="condition.shopId != null">
+                AND shop_id = #{condition.shopId}
+            </if>
+            <if test="condition.type != null">
+                AND type = #{condition.type}
+            </if>
+        </where>
+    </sql>
+    <select id="selectWithPage" parameterType="Map" resultType="TaskStat">
+        select id, shop_id, type,task_num,success_num,failed_num,abnormal_num,not_informed_num,create_time,modify_time from task_stat
+        <include refid="condition"/>
+        <include refid="com.lomoye.common.dao.paged"/>
+    </select>
+
+    <select id="selectByCondition" parameterType="Map" resultType="TaskStat">
+        select id, shop_id, type,task_num,success_num,failed_num,abnormal_num,not_informed_num,create_time,modify_time from task_stat
+        <include refid="condition"/>
+        <include refid="com.lomoye.common.dao.orderby"/>
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="Long" resultType="TaskStat">
+        select id, shop_id, type,task_num,success_num,failed_num,abnormal_num,not_informed_num,create_time,modify_time from task_stat
+        where id=#{key}
+    </select>
+
+    <select id="selectOne" parameterType="Map" resultType="TaskStat">
+        select id, shop_id, type,task_num,success_num,failed_num,abnormal_num,not_informed_num,create_time,modify_time from task_stat
+        <include refid="condition"/>
+        limit 1
+    </select>
+
+    <select id="selectCount" parameterType="Map" resultType="long">
+        select count(*) from task_stat
+        <include refid="condition"/>
+    </select>
+
+    <insert id="insert" keyProperty="id" parameterType="TaskStat">
+        insert into task_stat
+        (shop_id, type,task_num,success_num,failed_num,abnormal_num,not_informed_num,create_time,modify_time)
+        values
+        (#{shopId},#{type},#{taskNum},#{successNum},#{failedNum},#{abnormalNum},#{notInformedNum}, #{createTime},#{modifyTime})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="TaskStat">
+        update task_stat set
+        shop_id=#{shopId},
+        type=#{type},
+        task_num=#{taskNum},
+        success_num=#{successNum},
+        failed_num=#{failedNum},
+        abnormal_num=#{abnormalNum},
+        not_informed_num=#{notInformedNum},
+        create_time=#{createTime},
+        modify_time=#{modifyTime}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="Long">
+        delete from task_stat
+        where id = #{key}
+    </delete>
+
+    <delete id="deleteByCondition" parameterType="Map">
+        delete from task_stat
+        <include refid="condition"/>
+    </delete>
+
+    <select id="selectTaskStatByTypes" parameterType="Long" resultType="TaskStat">
+        select id, shop_id, type,task_num,success_num,failed_num,abnormal_num,not_informed_num,create_time,modify_time from task_stat
+        where shop_id = #{shopId} and type in
+        <foreach item="type" index="index" collection="types"
+                 open="(" separator="," close=")">
+            #{type}
+        </foreach>
+    </select>
+</mapper>

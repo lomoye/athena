@@ -1,0 +1,76 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lomoye.task.dao.SystemInfoMapper">
+    <sql id="condition">
+        <where>
+            <if test="condition.id != null">
+                id = #{condition.id}
+            </if>
+            <if test="condition.instance != null">
+                AND instance = #{condition.instance}
+            </if>
+            <if test="condition.ip != null">
+                AND ip = #{condition.ip}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="selectAllField">
+        select id,instance,ip,`desc`,create_time,modify_time from system_info
+    </sql>
+
+    <select id="selectWithPage" parameterType="Map" resultType="SystemInfo">
+        <include refid="selectAllField"/>
+        <include refid="condition"/>
+        <include refid="com.lomoye.common.dao.paged"/>
+    </select>
+
+    <select id="selectByCondition" parameterType="Map" resultType="SystemInfo">
+        <include refid="selectAllField"/>
+        <include refid="condition"/>
+        <include refid="com.lomoye.common.dao.orderby"/>
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="Long" resultType="SystemInfo">
+        <include refid="selectAllField"/>
+        where id=#{key}
+    </select>
+
+    <select id="selectOne" parameterType="Map" resultType="SystemInfo">
+        <include refid="selectAllField"/>
+        <include refid="condition"/>
+        limit 1
+    </select>
+
+    <select id="selectCount" parameterType="Map" resultType="long">
+        select count(*) from system_info
+        <include refid="condition"/>
+    </select>
+
+    <insert id="insert" keyProperty="id" parameterType="SystemInfo">
+        insert into system_info
+        (instance,ip,`desc`,create_time,modify_time)
+        VALUES
+        (#{instance},#{ip},#{desc},#{createTime},#{modifyTime})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="SystemInfo">
+        update system_info set
+        instance=#{instance},
+        ip=#{ip},
+        `desc`=#{desc},
+        modify_time=#{modifyTime}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="Long">
+        delete from system_info
+        where id = #{key}
+    </delete>
+
+    <delete id="deleteByCondition" parameterType="Map">
+        delete from system_info
+        <include refid="condition"/>
+    </delete>
+</mapper>
